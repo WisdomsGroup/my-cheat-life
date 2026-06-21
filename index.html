@@ -926,7 +926,7 @@
     <section class="panel flow-panel" id="assessmentScreen" hidden>
       <div class="flow-heading">
         <h2>生活情境</h2>
-        <p>問題較多，請耐心作答，才能更完整地判斷對你最有利的可能方向。請依近半年的真實反應選擇，不需要猜哪個答案比較好。</p>
+        <p>每個題組會隨機抽 3 題作答，用較短時間取得性向判斷依據。請依近半年的真實反應選擇，不需要猜哪個答案比較好。</p>
       </div>
       <article class="scenario-card">
         <div class="scenario-kicker" id="scenarioKicker"></div>
@@ -1012,7 +1012,7 @@
       Array.from({ length: Math.ceil(items.length / size) }, (_, index) =>
         items.slice(index * size, index * size + size)
       );
-    const assessmentRounds = [
+    const fullAssessmentSections = [
       ...chunk(SelfReportMatchingRules.behaviorQuestions, 10).map((items, index) => ({
         type: "behavior",
         label: `自我性向 ${index + 1}`,
@@ -1026,9 +1026,8 @@
         items
       }))
     ];
-    const activeDimensions = [...new Set(
-      SelfReportMatchingRules.behaviorQuestions.map((question) => question.dimension || question.id)
-    )];
+    const randomQuestionCount = 3;
+    let assessmentRounds = createAssessmentRounds();
     let roundIndex = 0;
     let questionIndex = 0;
     let assessmentAnswers = { behaviors: {}, evidence: {} };
@@ -1126,15 +1125,42 @@
     }
 
     function getSelfReport() {
+      const answeredDimensions = new Set();
+      SelfReportMatchingRules.behaviorQuestions.forEach((question) => {
+        if (Object.prototype.hasOwnProperty.call(assessmentAnswers.behaviors, question.id)) {
+          answeredDimensions.add(question.dimension || question.id);
+        }
+      });
+      RealBehaviorEvidence.questions.forEach((question) => {
+        if (Object.prototype.hasOwnProperty.call(assessmentAnswers.evidence, question.id)) {
+          answeredDimensions.add(question.dimension);
+        }
+      });
       return {
         pressureResponse: pressureResponse.value,
         examMode: examMode.value,
         environment: workEnvironment.value,
         behaviors: assessmentAnswers.behaviors,
         evidence: assessmentAnswers.evidence,
-        activeDimensions,
+        activeDimensions: [...answeredDimensions],
         elapsedSeconds: Math.round((Date.now() - selfReportStartedAt) / 1000)
       };
+    }
+
+    function shuffled(items) {
+      const copy = [...items];
+      for (let index = copy.length - 1; index > 0; index -= 1) {
+        const swapIndex = Math.floor(Math.random() * (index + 1));
+        [copy[index], copy[swapIndex]] = [copy[swapIndex], copy[index]];
+      }
+      return copy;
+    }
+
+    function createAssessmentRounds() {
+      return fullAssessmentSections.map((section) => ({
+        ...section,
+        items: shuffled(section.items).slice(0, Math.min(randomQuestionCount, section.items.length))
+      }));
     }
 
     function showScreen(screen) {
@@ -1322,6 +1348,7 @@
 
     birthForm.addEventListener("submit", (event) => {
       event.preventDefault();
+      assessmentRounds = createAssessmentRounds();
       roundIndex = 0;
       questionIndex = 0;
       assessmentAnswers = { behaviors: {}, evidence: {} };
@@ -1370,6 +1397,7 @@
     });
 
     reassessButton.addEventListener("click", () => {
+      assessmentRounds = createAssessmentRounds();
       roundIndex = 0;
       questionIndex = 0;
       assessmentAnswers = { behaviors: {}, evidence: {} };

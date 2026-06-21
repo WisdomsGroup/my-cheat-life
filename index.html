@@ -1,0 +1,1382 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>生辰匹配職能參考測算</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #24211d;
+      --muted: #6f675e;
+      --line: #ddd4c7;
+      --paper: #fffdf8;
+      --panel: #f7f2e9;
+      --accent: #8d3e2b;
+      --teal: #176b73;
+      --gold: #b68234;
+      --warn: #9b541d;
+      --error: #9f2f2f;
+      --shadow: 0 16px 42px rgba(69, 49, 31, 0.13);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      min-height: 100vh;
+      margin: 0;
+      color: var(--ink);
+      font-family: "Noto Sans TC", "Microsoft JhengHei", system-ui, sans-serif;
+      background:
+        radial-gradient(circle at 10% 8%, rgba(182, 130, 52, 0.15), transparent 28rem),
+        linear-gradient(135deg, #f4ede2, #fffaf1 52%, #edf5f3);
+    }
+
+    button, select, input { font: inherit; }
+
+    [hidden] { display: none !important; }
+
+    main {
+      width: min(1220px, calc(100% - 28px));
+      margin: 0 auto;
+      padding: 24px 0 40px;
+    }
+
+    .page-header {
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+      align-items: end;
+      margin-bottom: 18px;
+    }
+
+    h1 {
+      margin: 0 0 7px;
+      font-size: clamp(1.75rem, 4vw, 2.6rem);
+      letter-spacing: 0;
+    }
+
+    .page-header p {
+      max-width: 760px;
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.65;
+    }
+
+    .page-header > div { width: 100%; }
+
+    .page-header h1 {
+      font-size: clamp(2.1rem, 4.8vw, 3.12rem);
+      text-align: center;
+    }
+
+    .intro-copy {
+      display: grid;
+      gap: 16px;
+      max-width: 860px;
+      margin: 16px auto 0;
+      color: var(--muted);
+      line-height: 1.85;
+    }
+
+    .intro-copy p { margin: 0; }
+
+    .reference-principle {
+      display: grid;
+      gap: 7px;
+      padding: 16px;
+      border: 1px solid rgba(141, 62, 43, 0.28);
+      border-radius: 7px;
+      background: #fff8f2;
+      text-align: center;
+    }
+
+    .page-header .effort-message {
+      color: #a32620;
+      font-size: 1.12rem;
+      font-weight: 900;
+    }
+
+    .page-header .reference-warning {
+      color: #695d53;
+      font-size: 0.9rem;
+      font-weight: 800;
+    }
+
+    .blessing-message {
+      color: #3f3730;
+      font-weight: 800;
+      text-align: center;
+    }
+
+    .engine-badge {
+      flex: 0 0 auto;
+      padding: 7px 10px;
+      border: 1px solid rgba(23, 107, 115, 0.3);
+      border-radius: 999px;
+      color: var(--teal);
+      background: #f1fbf9;
+      font-size: 0.78rem;
+      font-weight: 800;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(290px, 0.68fr) minmax(0, 1.32fr);
+      gap: 18px;
+      align-items: start;
+    }
+
+    .panel {
+      border: 1px solid rgba(123, 104, 80, 0.25);
+      border-radius: 8px;
+      background: rgba(255, 253, 248, 0.95);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .form-panel {
+      position: sticky;
+      top: 18px;
+      padding: 20px;
+    }
+
+    .form-panel h2, .result-header h2 {
+      margin: 0;
+      font-size: 1.08rem;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 18px;
+    }
+
+    .field {
+      display: grid;
+      gap: 7px;
+      min-width: 0;
+    }
+
+    .field.full { grid-column: 1 / -1; }
+
+    label {
+      color: #4a4037;
+      font-size: 0.9rem;
+      font-weight: 800;
+    }
+
+    select, input {
+      width: 100%;
+      min-height: 44px;
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      padding: 0 10px;
+      color: var(--ink);
+      background: #fffefa;
+      outline: none;
+    }
+
+    select:focus, input:focus {
+      border-color: var(--teal);
+      box-shadow: 0 0 0 3px rgba(23, 107, 115, 0.18);
+    }
+
+    .hint {
+      margin: 8px 0 0;
+      color: var(--muted);
+      font-size: 0.82rem;
+      line-height: 1.55;
+    }
+
+    .behavior-section {
+      grid-column: 1 / -1;
+      margin-top: 8px;
+      padding-top: 18px;
+      border-top: 1px solid var(--line);
+    }
+
+    .behavior-section h3 {
+      margin: 0 0 6px;
+      font-size: 1rem;
+    }
+
+    .behavior-list {
+      display: grid;
+      gap: 12px;
+      margin-top: 14px;
+    }
+
+    .behavior-question {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 150px;
+      gap: 14px;
+      align-items: center;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .behavior-question:last-child { border-bottom: 0; }
+    .behavior-question label { line-height: 1.55; }
+
+    .behavior-batch {
+      padding: 8px 10px;
+      border-left: 3px solid var(--teal);
+      color: var(--teal);
+      background: #edf8f6;
+      font-size: 0.82rem;
+      font-weight: 900;
+    }
+
+    .actions {
+      display: flex;
+      gap: 9px;
+      margin-top: 18px;
+    }
+
+    button {
+      min-height: 43px;
+      border: 0;
+      border-radius: 7px;
+      padding: 0 15px;
+      color: #fff;
+      background: var(--accent);
+      font-weight: 900;
+      cursor: pointer;
+    }
+
+    button.secondary {
+      border: 1px solid rgba(23, 107, 115, 0.32);
+      color: var(--teal);
+      background: #eff9f7;
+    }
+
+    button.secondary:disabled {
+      cursor: not-allowed;
+      opacity: 0.45;
+    }
+
+    .result-header {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+      padding: 17px 20px;
+      border-bottom: 1px solid var(--line);
+      background: var(--panel);
+    }
+
+    .status {
+      border-radius: 999px;
+      padding: 5px 9px;
+      color: #fff;
+      background: var(--teal);
+      font-size: 0.76rem;
+      font-weight: 900;
+    }
+
+    #result {
+      display: grid;
+      gap: 0;
+    }
+
+    .section {
+      padding: 20px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .section:last-child { border-bottom: 0; }
+
+    .section h3 {
+      margin: 0 0 13px;
+      font-size: 1rem;
+    }
+
+    .facts {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .fact {
+      padding: 11px 12px;
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      background: #fffefa;
+    }
+
+    .fact span {
+      display: block;
+      margin-bottom: 4px;
+      color: var(--muted);
+      font-size: 0.78rem;
+      font-weight: 700;
+    }
+
+    .fact strong {
+      line-height: 1.5;
+    }
+
+    .pillars {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 9px;
+    }
+
+    .pillar {
+      min-width: 0;
+      padding: 13px 9px;
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      text-align: center;
+      background: #fffaf1;
+    }
+
+    .pillar .name {
+      color: var(--muted);
+      font-size: 0.78rem;
+      font-weight: 800;
+    }
+
+    .pillar .gz {
+      margin: 5px 0;
+      color: var(--accent);
+      font-size: 1.55rem;
+      font-weight: 900;
+    }
+
+    .pillar .meta {
+      color: #5d5349;
+      font-size: 0.78rem;
+      line-height: 1.55;
+      overflow-wrap: anywhere;
+    }
+
+    .table-wrap { overflow-x: auto; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.86rem;
+    }
+
+    th, td {
+      padding: 9px 8px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      white-space: nowrap;
+    }
+
+    th {
+      color: var(--muted);
+      background: var(--panel);
+      font-size: 0.78rem;
+    }
+
+    .element-bars {
+      display: grid;
+      gap: 9px;
+    }
+
+    .element-row {
+      display: grid;
+      grid-template-columns: 28px minmax(0, 1fr) 48px 28px;
+      gap: 9px;
+      align-items: center;
+      font-size: 0.84rem;
+    }
+
+    .bar {
+      height: 9px;
+      overflow: hidden;
+      border-radius: 999px;
+      background: #ebe5dc;
+    }
+
+    .bar > span {
+      display: block;
+      height: 100%;
+      border-radius: inherit;
+      background: var(--teal);
+    }
+
+    .callout {
+      margin-top: 13px;
+      padding: 12px 13px;
+      border-left: 4px solid var(--gold);
+      border-radius: 5px;
+      color: #58422d;
+      background: #fff7e9;
+      line-height: 1.65;
+    }
+
+    .callout.warning {
+      border-left-color: var(--warn);
+      background: #fff3e8;
+    }
+
+    .observations {
+      display: grid;
+      gap: 9px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .observations li {
+      display: grid;
+      grid-template-columns: 8px 1fr;
+      gap: 9px;
+      line-height: 1.65;
+    }
+
+    .observations li::before {
+      content: "";
+      width: 8px;
+      height: 8px;
+      margin-top: 0.55em;
+      border-radius: 50%;
+      background: var(--gold);
+    }
+
+    .role-grid {
+      display: grid;
+      gap: 11px;
+    }
+
+    .role-card {
+      display: grid;
+      grid-template-columns: 118px minmax(0, 1fr);
+      gap: 14px;
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fffefa;
+    }
+
+    .role-rank {
+      display: grid;
+      place-items: center;
+      align-content: center;
+      min-height: 72px;
+      border-radius: 7px;
+      color: #fff;
+      background: var(--accent);
+      font-weight: 900;
+    }
+
+    .role-rank strong {
+      display: block;
+      font-size: 1.05rem;
+      white-space: nowrap;
+    }
+
+    .role-rank span {
+      font-size: 0.72rem;
+    }
+
+    .role-card h4 {
+      margin: 0 0 5px;
+      font-size: 1rem;
+    }
+
+    .role-examples {
+      margin: 0 0 9px;
+      color: var(--muted);
+      font-size: 0.8rem;
+      line-height: 1.5;
+    }
+
+    .match-breakdown {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 9px;
+    }
+
+    .match-breakdown span {
+      padding: 4px 7px;
+      border-radius: 999px;
+      color: var(--teal);
+      background: #eef8f6;
+      font-size: 0.74rem;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .role-notes {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 9px;
+      font-size: 0.82rem;
+      line-height: 1.55;
+    }
+
+    .role-notes div {
+      padding: 9px;
+      border-radius: 6px;
+      background: var(--panel);
+    }
+
+    .role-notes strong {
+      display: block;
+      margin-bottom: 3px;
+    }
+
+    .reminder-groups {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 11px;
+    }
+
+    .reminder-group {
+      padding: 13px;
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      background: #fffefa;
+    }
+
+    .reminder-group h4 {
+      margin: 0 0 9px;
+      font-size: 0.92rem;
+    }
+
+    .reminder-group ul {
+      display: grid;
+      gap: 8px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .reminder-group li {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 7px;
+      align-items: start;
+      color: #4d433a;
+      font-size: 0.82rem;
+      line-height: 1.55;
+    }
+
+    .reminder-id {
+      padding: 2px 5px;
+      border-radius: 4px;
+      color: var(--teal);
+      background: #edf8f6;
+      font-size: 0.68rem;
+      font-weight: 900;
+    }
+
+    .advice-groups, .advice-list {
+      display: grid;
+      gap: 16px;
+    }
+
+    .advice-group h4 {
+      margin: 0 0 10px;
+      font-size: 0.94rem;
+    }
+
+    .advice-item {
+      padding-top: 12px;
+      border-top: 1px solid var(--line);
+    }
+
+    .advice-item:first-child {
+      padding-top: 0;
+      border-top: 0;
+    }
+
+    .advice-item h5 {
+      margin: 0 0 8px;
+      font-size: 0.95rem;
+    }
+
+    .advice-item p {
+      margin: 5px 0;
+      color: var(--muted);
+      font-size: 0.84rem;
+      line-height: 1.65;
+    }
+
+    .advice-item strong { color: var(--ink); }
+
+    .source-note {
+      color: var(--muted);
+      font-size: 0.8rem;
+      line-height: 1.6;
+    }
+
+    .error-box {
+      margin: 20px;
+      padding: 14px;
+      border: 1px solid rgba(159, 47, 47, 0.3);
+      border-radius: 7px;
+      color: var(--error);
+      background: #fff3f3;
+      line-height: 1.6;
+    }
+
+    .auth-shell {
+      width: min(460px, 100%);
+      margin: 8vh auto 0;
+      padding: 34px;
+      text-align: center;
+    }
+
+    .auth-mark {
+      position: relative;
+      display: grid;
+      place-items: center;
+      width: 64px;
+      height: 64px;
+      margin: 0 auto 18px;
+      border: 1px solid rgba(141, 62, 43, 0.48);
+      border-radius: 50%;
+      background:
+        linear-gradient(var(--line), var(--line)) center 7px / 1px 6px no-repeat,
+        linear-gradient(var(--line), var(--line)) center calc(100% - 7px) / 1px 6px no-repeat,
+        linear-gradient(90deg, var(--line), var(--line)) 7px center / 6px 1px no-repeat,
+        linear-gradient(90deg, var(--line), var(--line)) calc(100% - 7px) center / 6px 1px no-repeat,
+        #fffdf9;
+      box-shadow:
+        0 0 0 5px rgba(141, 62, 43, 0.06),
+        inset 0 0 0 5px #fff,
+        inset 0 0 0 6px rgba(23, 107, 115, 0.14);
+    }
+
+    .auth-mark::before,
+    .auth-mark::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+    }
+
+    .auth-mark::before {
+      top: 12px;
+      width: 2px;
+      height: 40px;
+      border-radius: 999px;
+      background: linear-gradient(to bottom, var(--accent) 0 48%, var(--teal) 52% 100%);
+      transform: translateX(-50%) rotate(24deg);
+      transform-origin: 50% 50%;
+      animation: compass-needle 9s ease-in-out infinite;
+    }
+
+    .auth-mark::after {
+      top: 50%;
+      width: 7px;
+      height: 7px;
+      border: 2px solid #fffdf9;
+      border-radius: 50%;
+      background: #594f47;
+      transform: translate(-50%, -50%);
+    }
+
+    @keyframes compass-needle {
+      0%, 18% { transform: translateX(-50%) rotate(24deg); }
+      28%, 44% { transform: translateX(-50%) rotate(68deg); }
+      54%, 70% { transform: translateX(-50%) rotate(-18deg); }
+      80%, 92% { transform: translateX(-50%) rotate(42deg); }
+      100% { transform: translateX(-50%) rotate(24deg); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .auth-mark::before { animation: none; }
+    }
+
+    .auth-shell h1 { font-size: 1.65rem; }
+    .auth-shell p, .flow-heading p { color: var(--muted); line-height: 1.7; }
+
+    .apple-button {
+      width: 100%;
+      margin-top: 18px;
+      color: #fff;
+      background: #111;
+      font-size: 1rem;
+    }
+
+    .apple-button span { margin-right: 9px; font-size: 1.2rem; }
+
+    .flow-panel {
+      width: min(760px, 100%);
+      margin: 0 auto;
+      padding: 24px;
+    }
+
+    .flow-heading { margin-bottom: 20px; }
+    .flow-heading h2 { margin: 0 0 7px; }
+    .flow-heading p { margin: 0; }
+
+    .scenario-card {
+      min-height: 320px;
+      padding: 26px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fffefa;
+    }
+
+    .scenario-kicker {
+      color: var(--teal);
+      font-size: 0.8rem;
+      font-weight: 900;
+    }
+
+    .scenario-card h3 {
+      margin: 14px 0 24px;
+      font-size: 1.25rem;
+      line-height: 1.7;
+    }
+
+    .choice-list { display: grid; gap: 9px; }
+
+    .choice-button {
+      display: grid;
+      grid-template-columns: 18px 1fr;
+      gap: 10px;
+      align-items: center;
+      width: 100%;
+      min-height: 48px;
+      padding: 9px 13px;
+      border: 1px solid var(--line);
+      color: var(--ink);
+      background: #fff;
+      text-align: left;
+    }
+
+    .choice-button:hover { border-color: var(--teal); }
+
+    .choice-button.selected {
+      border-color: var(--teal);
+      color: var(--teal);
+      background: #edf8f6;
+    }
+
+    .choice-dot {
+      width: 14px;
+      height: 14px;
+      border: 2px solid #978d82;
+      border-radius: 50%;
+    }
+
+    .choice-button.selected .choice-dot { border: 4px solid var(--teal); }
+
+    .assessment-footer {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 12px;
+      align-items: center;
+      margin-top: 16px;
+    }
+
+    .progress-track {
+      height: 6px;
+      overflow: hidden;
+      border-radius: 999px;
+      background: #e7e0d6;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: var(--teal);
+      transition: width 180ms ease;
+    }
+
+    .complete-button:disabled {
+      cursor: not-allowed;
+      color: #8b857e;
+      background: #dedbd6;
+    }
+
+    .complete-button.ready { background: #248356; }
+
+    .shared-advice {
+      margin-top: 14px;
+      padding: 18px;
+      border: 1px solid rgba(141, 62, 43, 0.24);
+      border-radius: 8px;
+      background: #f7f2e9;
+    }
+
+    .shared-advice h4 { margin: 0 0 13px; }
+    .shared-advice p { margin: 9px 0; line-height: 1.7; }
+    .shared-advice strong { color: var(--accent); }
+
+    @media (max-width: 900px) {
+      .layout { grid-template-columns: 1fr; }
+      .form-panel { position: static; }
+    }
+
+    @media (max-width: 620px) {
+      main { width: min(100% - 18px, 1220px); padding-top: 14px; }
+      .page-header { display: grid; align-items: start; }
+      .form-grid, .facts { grid-template-columns: 1fr; }
+      .pillars { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .actions { display: grid; }
+      .role-card { grid-template-columns: 88px minmax(0, 1fr); }
+      .role-rank strong { font-size: 0.92rem; }
+      .role-notes { grid-template-columns: 1fr; }
+      .reminder-groups { grid-template-columns: 1fr; }
+      .behavior-question { grid-template-columns: 1fr; gap: 7px; }
+      .assessment-footer { grid-template-columns: auto 1fr; }
+      .complete-button { grid-column: 1 / -1; width: 100%; }
+      .auth-shell, .flow-panel { padding: 20px; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header class="page-header" id="appHeader" hidden>
+      <div>
+        <h1>生辰匹配職能參考測算</h1>
+        <div class="intro-copy">
+          <p>
+            依照八字與自我性向，匹配三個較可能適合你的職群選擇。即使結果沒有完全符合期待也別灰心，
+            系統仍會依你的選擇提供可能有幫助的建議。
+          </p>
+          <p>
+            請注意：車子開到目的地前，不只取決於車子（自身的命或運）有多好，也取決於爾後準備了多少油
+            （後天為自己增添多少智慧、經驗與能力）。系統大概只能像導航器，提前提醒前方的大轉彎可能遇到塞車，
+            或告訴你前往終點有兩、三條路可以到達；「路」永遠是自己選的。所以路上的坑坑窪窪，
+            仍要靠你累積的「經驗與能力」，決定必須小心閃過，還是能夠輕鬆跨過。
+          </p>
+          <div class="reference-principle">
+            <p class="effort-message">人生三分天註定，七分靠努力。</p>
+            <p class="reference-warning">以下資料純屬參考，切勿過度迷信。</p>
+          </div>
+          <p class="blessing-message">祝福您：<br>考試輕鬆過關，未來一路順遂。</p>
+        </div>
+      </div>
+    </header>
+
+    <section class="panel auth-shell" id="authScreen">
+      <div class="auth-mark" aria-hidden="true"></div>
+      <h1>生辰匹配職能參考測算</h1>
+      <p>登入後填寫出生資料，再依生活情境完成自我性向評估。</p>
+      <button class="apple-button" type="button" id="enterAssessmentButton">進入測算</button>
+    </section>
+
+    <section id="memberScreen" hidden>
+      <form class="panel flow-panel" id="birthForm">
+        <div class="flow-heading">
+          <h2>會員資料</h2>
+          <p>請確認基本資料與出生時間，完成後進入生活情境評估。</p>
+        </div>
+        <div class="form-grid">
+          <div class="field full">
+            <label for="memberName">姓名或暱稱</label>
+            <input id="memberName" type="text" autocomplete="name" placeholder="怎麼稱呼你" required>
+          </div>
+          <div class="field">
+            <label for="calendarType">曆法</label>
+            <select id="calendarType">
+              <option value="solar">國曆</option>
+              <option value="lunar">農曆</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="gender">性別</label>
+            <select id="gender">
+              <option value="male">男</option>
+              <option value="female">女</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="birthYear">出生年</label>
+            <select id="birthYear"></select>
+          </div>
+          <div class="field">
+            <label for="birthMonth">出生月</label>
+            <select id="birthMonth"></select>
+          </div>
+          <div class="field">
+            <label for="birthDay">出生日</label>
+            <select id="birthDay"></select>
+          </div>
+          <div class="field" id="leapField" hidden>
+            <label for="isLeapMonth">農曆月份</label>
+            <select id="isLeapMonth">
+              <option value="false">一般月</option>
+              <option value="true">閏月</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="birthHour">出生時</label>
+            <select id="birthHour"></select>
+          </div>
+          <div class="field full">
+            <label for="timezone">時間基準</label>
+            <select id="timezone">
+              <option value="Asia/Taipei">台灣標準時間 UTC+8</option>
+            </select>
+            <p class="hint">目前以出生證明上的民用時間計算。</p>
+          </div>
+          <select id="pressureResponse" hidden></select>
+          <select id="workEnvironment" hidden></select>
+          <input type="hidden" id="examMode" value="balanced">
+        </div>
+        <div class="actions">
+          <button type="submit">開始使用評估</button>
+        </div>
+      </form>
+    </section>
+
+    <section class="panel flow-panel" id="assessmentScreen" hidden>
+      <div class="flow-heading">
+        <h2>生活情境</h2>
+        <p>問題較多，請耐心作答，才能更完整地判斷對你最有利的可能方向。請依近半年的真實反應選擇，不需要猜哪個答案比較好。</p>
+      </div>
+      <article class="scenario-card">
+        <div class="scenario-kicker" id="scenarioKicker"></div>
+        <h3 id="scenarioQuestion"></h3>
+        <div class="choice-list" id="choiceList"></div>
+      </article>
+      <div class="assessment-footer">
+        <button class="secondary" type="button" id="previousQuestion">上一題</button>
+        <div>
+          <strong id="progressText">1/10</strong>
+          <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+        </div>
+        <button class="complete-button" type="button" id="completeAssessment" disabled>完成</button>
+      </div>
+    </section>
+
+    <section id="resultScreen" hidden>
+      <section class="panel">
+        <div class="result-header">
+          <h2>職能分析結果</h2>
+          <button class="secondary" type="button" id="reassessButton">重新評估</button>
+        </div>
+        <div id="result"></div>
+      </section>
+    </section>
+  </main>
+
+  <script src="vendor/lunar.js"></script>
+  <script src="data/DB-002-bazi-interpretation-rules.js"></script>
+  <script src="bazi-engine.js"></script>
+  <script src="data/DB-001-exam-role-competency.js"></script>
+  <script src="data/DB-003-self-report-matching.js"></script>
+  <script src="data/DB-014-subrole-task-matrix.js"></script>
+  <script src="data/DB-015-real-behavior-evidence.js"></script>
+  <script src="data/DB-018-response-quality-rules.js"></script>
+  <script src="exam-matcher.js"></script>
+  <script src="data/DB-004-emotion-pressure-reminders.js"></script>
+  <script src="data/DB-005-study-strategy-reminders.js"></script>
+  <script src="data/DB-006-exam-day-risk-reminders.js"></script>
+  <script src="data/DB-007-work-environment-reminders.js"></script>
+  <script src="reminder-selector.js"></script>
+  <script src="data/DB-008-bazi-foundation-advice.js"></script>
+  <script src="data/DB-009-ability-detail-advice.js"></script>
+  <script src="data/DB-010-ten-god-cross-advice.js"></script>
+  <script src="data/DB-011-exam-task-advice.js"></script>
+  <script src="data/DB-012-work-context-advice.js"></script>
+  <script src="data/DB-013-behavior-consistency-advice.js"></script>
+  <script src="data/DB-016-three-factor-cross-advice.js"></script>
+  <script src="data/DB-017-advanced-bazi-stage-advice.js"></script>
+  <script src="detailed-advice-selector.js"></script>
+  <script>
+    const authScreen = document.getElementById("authScreen");
+    const memberScreen = document.getElementById("memberScreen");
+    const assessmentScreen = document.getElementById("assessmentScreen");
+    const resultScreen = document.getElementById("resultScreen");
+    const appHeader = document.getElementById("appHeader");
+    const enterAssessmentButton = document.getElementById("enterAssessmentButton");
+    const memberName = document.getElementById("memberName");
+    const calendarType = document.getElementById("calendarType");
+    const gender = document.getElementById("gender");
+    const birthYear = document.getElementById("birthYear");
+    const birthMonth = document.getElementById("birthMonth");
+    const birthDay = document.getElementById("birthDay");
+    const birthHour = document.getElementById("birthHour");
+    const isLeapMonth = document.getElementById("isLeapMonth");
+    const leapField = document.getElementById("leapField");
+    const timezone = document.getElementById("timezone");
+    const pressureResponse = document.getElementById("pressureResponse");
+    const examMode = document.getElementById("examMode");
+    const workEnvironment = document.getElementById("workEnvironment");
+    const birthForm = document.getElementById("birthForm");
+    const result = document.getElementById("result");
+    const scenarioKicker = document.getElementById("scenarioKicker");
+    const scenarioQuestion = document.getElementById("scenarioQuestion");
+    const choiceList = document.getElementById("choiceList");
+    const previousQuestion = document.getElementById("previousQuestion");
+    const progressText = document.getElementById("progressText");
+    const progressFill = document.getElementById("progressFill");
+    const completeAssessment = document.getElementById("completeAssessment");
+    const reassessButton = document.getElementById("reassessButton");
+    const lunarMonths = ["正", "二", "三", "四", "五", "六", "七", "八", "九", "十", "十一", "十二"];
+    const chunk = (items, size) =>
+      Array.from({ length: Math.ceil(items.length / size) }, (_, index) =>
+        items.slice(index * size, index * size + size)
+      );
+    const assessmentRounds = [
+      ...chunk(SelfReportMatchingRules.behaviorQuestions, 10).map((items, index) => ({
+        type: "behavior",
+        label: `自我性向 ${index + 1}`,
+        scale: SelfReportMatchingRules.behaviorScale,
+        items
+      })),
+      ...chunk(RealBehaviorEvidence.questions, 10).map((items, index) => ({
+        type: "evidence",
+        label: `生活驗證 ${index + 1}`,
+        scale: RealBehaviorEvidence.scale,
+        items
+      }))
+    ];
+    const activeDimensions = [...new Set(
+      SelfReportMatchingRules.behaviorQuestions.map((question) => question.dimension || question.id)
+    )];
+    let roundIndex = 0;
+    let questionIndex = 0;
+    let assessmentAnswers = { behaviors: {}, evidence: {} };
+    let selfReportStartedAt = Date.now();
+
+    function options(select, values, selected) {
+      select.innerHTML = "";
+      values.forEach(({ value, label }) => {
+        const option = document.createElement("option");
+        option.value = value;
+        option.textContent = label;
+        select.appendChild(option);
+      });
+      if (selected !== undefined) select.value = String(selected);
+    }
+
+    function fillYears(selected) {
+      const current = new Date().getFullYear();
+      options(
+        birthYear,
+        Array.from({ length: 201 }, (_, index) => {
+          const year = current + 100 - index;
+          return { value: year, label: `${year} 年` };
+        }),
+        selected
+      );
+    }
+
+    function fillMonths(selected) {
+      const lunar = calendarType.value === "lunar";
+      options(
+        birthMonth,
+        Array.from({ length: 12 }, (_, index) => ({
+          value: index + 1,
+          label: lunar ? `${lunarMonths[index]}月` : `${index + 1} 月`
+        })),
+        selected
+      );
+    }
+
+    function validLeapMonth() {
+      if (calendarType.value !== "lunar") return 0;
+      return LunarYear.fromYear(Number(birthYear.value)).getLeapMonth();
+    }
+
+    function syncLeapMonth() {
+      const leapMonth = validLeapMonth();
+      leapField.hidden = calendarType.value !== "lunar";
+      const selectedMonth = Number(birthMonth.value);
+      const leapOption = isLeapMonth.querySelector('option[value="true"]');
+      leapOption.disabled = leapMonth !== selectedMonth;
+      leapOption.textContent = leapMonth
+        ? `閏${lunarMonths[leapMonth - 1]}月`
+        : "該年無閏月";
+      if (leapMonth !== selectedMonth) isLeapMonth.value = "false";
+    }
+
+    function getDayCount() {
+      const year = Number(birthYear.value);
+      const month = Number(birthMonth.value);
+      if (calendarType.value === "lunar") {
+        const lunarMonth = isLeapMonth.value === "true" ? -month : month;
+        const value = LunarMonth.fromYm(year, lunarMonth);
+        return value ? value.getDayCount() : 29;
+      }
+      return new Date(year, month, 0).getDate();
+    }
+
+    function fillDays(selected) {
+      const count = getDayCount();
+      options(
+        birthDay,
+        Array.from({ length: count }, (_, index) => ({
+          value: index + 1,
+          label: `${index + 1} 日`
+        })),
+        Math.min(Number(selected || birthDay.value || 1), count)
+      );
+    }
+
+    function getInput() {
+      return {
+        calendarType: calendarType.value,
+        gender: gender.value,
+        year: Number(birthYear.value),
+        month: Number(birthMonth.value),
+        day: Number(birthDay.value),
+        hour: Number(birthHour.value),
+        minute: 0,
+        isLeapMonth: calendarType.value === "lunar" && isLeapMonth.value === "true",
+        timezone: timezone.value,
+        daySect: 1,
+        yunSect: 1
+      };
+    }
+
+    function getSelfReport() {
+      return {
+        pressureResponse: pressureResponse.value,
+        examMode: examMode.value,
+        environment: workEnvironment.value,
+        behaviors: assessmentAnswers.behaviors,
+        evidence: assessmentAnswers.evidence,
+        activeDimensions,
+        elapsedSeconds: Math.round((Date.now() - selfReportStartedAt) / 1000)
+      };
+    }
+
+    function showScreen(screen) {
+      [authScreen, memberScreen, assessmentScreen, resultScreen].forEach((item) => {
+        item.hidden = item !== screen;
+      });
+      appHeader.hidden = screen === authScreen;
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function renderScenario() {
+      const round = assessmentRounds[roundIndex];
+      const item = round.items[questionIndex];
+      const answerGroup = round.type === "behavior" ? assessmentAnswers.behaviors : assessmentAnswers.evidence;
+      const selected = answerGroup[item.id];
+      const answeredCount = round.items.filter((question) =>
+        Object.prototype.hasOwnProperty.call(answerGroup, question.id)
+      ).length;
+      scenarioKicker.textContent = `${round.label}｜第 ${roundIndex + 1} 輪／共 ${assessmentRounds.length} 輪`;
+      scenarioQuestion.textContent = item.prompt;
+      choiceList.innerHTML = round.scale.map((option) => `
+        <button class="choice-button ${selected === option.value ? "selected" : ""}" type="button" data-value="${option.value}">
+          <span class="choice-dot"></span>
+          <span>${escapeHtml(option.label)}</span>
+        </button>
+      `).join("");
+      progressText.textContent = `${questionIndex + 1}/${round.items.length}`;
+      progressFill.style.width = `${answeredCount / round.items.length * 100}%`;
+      previousQuestion.disabled = roundIndex === 0 && questionIndex === 0;
+      completeAssessment.disabled = answeredCount !== round.items.length;
+      completeAssessment.classList.toggle("ready", answeredCount === round.items.length);
+    }
+
+    function unique(values) {
+      return [...new Set(values.filter(Boolean))];
+    }
+
+    function cleanAdviceText(value) {
+      return String(value || "").trim().replace(/[。；，、\s]+$/u, "");
+    }
+
+    function formatAdviceList(values, fallback) {
+      const cleaned = unique(values.map(cleanAdviceText)).filter(Boolean);
+      return cleaned.length
+        ? `${cleaned.map(escapeHtml).join("；")}。`
+        : fallback;
+    }
+
+    function formatSolarHour(value) {
+      const match = String(value).match(/^(\d{4}-\d{2}-\d{2})\s+(\d{2}):/);
+      return match ? `${match[1]} ${match[2]} 時` : value;
+    }
+
+    function escapeHtml(value) {
+      return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;");
+    }
+
+    function render(data, matching, reminders, detailedAdvice) {
+      const sharedStrengths = unique(matching.top3.flatMap((role) => role.strengths)).slice(0, 6);
+      const sharedCautions = unique(matching.top3.flatMap((role) => [...role.gaps, ...role.cautions]))
+        .map(cleanAdviceText)
+        .filter(Boolean)
+        .slice(0, 6);
+      const detailedActions = unique(detailedAdvice.groups.flatMap((group) =>
+        group.selected.map((advice) => advice.action)
+      )).map(cleanAdviceText).filter(Boolean);
+      const reminderActions = unique(reminders.databases.flatMap((database) =>
+        database.selected.map((reminder) => reminder.text)
+      )).map(cleanAdviceText).filter(Boolean);
+      const actionItems = unique([...detailedActions, ...reminderActions]).slice(0, 6);
+
+      result.innerHTML = `
+        <section class="section">
+          <h3>曆法轉換</h3>
+          <div class="facts">
+            <div class="fact"><span>國曆</span><strong>${escapeHtml(formatSolarHour(data.converted.solar))}</strong></div>
+            <div class="fact"><span>農曆</span><strong>${escapeHtml(data.converted.lunar)}</strong></div>
+            <div class="fact"><span>時間基準</span><strong>UTC+8 民用時間</strong></div>
+          </div>
+        </section>
+
+        <section class="section">
+          <h3>四柱</h3>
+          <div class="pillars">
+            ${data.pillars.map((pillar) => `
+              <article class="pillar">
+                <div class="name">${pillar.name}</div>
+                <div class="gz">${pillar.ganZhi}</div>
+                <div class="meta">${pillar.wuXing} · ${pillar.naYin}<br>${pillar.diShi}</div>
+              </article>
+            `).join("")}
+          </div>
+        </section>
+
+        <section class="section">
+          <h3>建議職群參考 Top 3</h3>
+          <div class="role-grid">
+            ${matching.top3.map((role, index) => `
+              <article class="role-card">
+                <div class="role-rank"><span>TOP ${index + 1}</span><strong>${escapeHtml(role.fitLevel)}</strong></div>
+                <div>
+                  <h4>${escapeHtml(role.name)}</h4>
+                  <p class="role-examples">類科例：${role.examples.map(escapeHtml).join("、")}</p>
+                  <div class="match-breakdown">
+                    <span>五行傾向：${escapeHtml(role.breakdownLevels.elements)}</span>
+                    <span>能力特質：${escapeHtml(role.breakdownLevels.traits)}</span>
+                    <span>考試題型：${escapeHtml(role.breakdownLevels.examMode)}</span>
+                    <span>工作環境：${escapeHtml(role.breakdownLevels.environment)}</span>
+                  </div>
+                </div>
+              </article>
+            `).join("")}
+          </div>
+          <article class="shared-advice">
+            <h4>${escapeHtml(memberName.value)}的整體建言</h4>
+            <p><strong>有利點：</strong>${sharedStrengths.length ? sharedStrengths.map(escapeHtml).join("、") : "目前沒有足夠明顯的共同優勢，建議以實際練習再確認。"}</p>
+            <p><strong>要注意：</strong>${formatAdviceList(sharedCautions, "目前沒有明顯的共同風險訊號。")}</p>
+            <p><strong>行動建議：</strong>${formatAdviceList(actionItems, "先各選一科歷屆題與一項實際任務試做，再依完成品質縮小方向。")}</p>
+          </article>
+        </section>
+      `;
+    }
+
+    function calculate() {
+      try {
+        const bazi = BaziEngine.calculate(getInput());
+        const selfReport = getSelfReport();
+        const matching = ExamMatcher.match(bazi, selfReport);
+        const reminders = ReminderSelector.select(bazi, matching, selfReport);
+        const detailedAdvice = DetailedAdviceSelector.select(bazi, matching, selfReport);
+        render(bazi, matching, reminders, detailedAdvice);
+        showScreen(resultScreen);
+      } catch (error) {
+        result.innerHTML = `<div class="error-box">${escapeHtml(error.message || error)}</div>`;
+        showScreen(resultScreen);
+      }
+    }
+
+    function syncCalendar() {
+      const currentMonth = birthMonth.value || 1;
+      const currentDay = birthDay.value || 1;
+      fillMonths(currentMonth);
+      syncLeapMonth();
+      fillDays(currentDay);
+    }
+
+    const now = new Date();
+    fillYears(now.getFullYear());
+    fillMonths(now.getMonth() + 1);
+    options(
+      birthHour,
+      Array.from({ length: 24 }, (_, hour) => ({ value: hour, label: `${String(hour).padStart(2, "0")} 時` })),
+      now.getHours()
+    );
+    options(pressureResponse, SelfReportMatchingRules.pressureOptions);
+    options(workEnvironment, SelfReportMatchingRules.environmentOptions);
+    pressureResponse.value = "unknown";
+    workEnvironment.value = "flexible";
+    syncLeapMonth();
+    fillDays(now.getDate());
+
+    calendarType.addEventListener("change", syncCalendar);
+    birthYear.addEventListener("change", () => {
+      syncLeapMonth();
+      fillDays();
+    });
+    birthMonth.addEventListener("change", () => {
+      syncLeapMonth();
+      fillDays();
+    });
+    isLeapMonth.addEventListener("change", () => {
+      fillDays();
+    });
+
+    function enterAssessment() {
+      showScreen(memberScreen);
+      memberName.focus();
+    }
+
+    window.enterAssessment = enterAssessment;
+    enterAssessmentButton.addEventListener("click", enterAssessment);
+
+    birthForm.addEventListener("submit", (event) => {
+      event.preventDefault();
+      roundIndex = 0;
+      questionIndex = 0;
+      assessmentAnswers = { behaviors: {}, evidence: {} };
+      selfReportStartedAt = Date.now();
+      renderScenario();
+      showScreen(assessmentScreen);
+    });
+
+    choiceList.addEventListener("click", (event) => {
+      const button = event.target.closest("[data-value]");
+      if (!button) return;
+      const round = assessmentRounds[roundIndex];
+      const item = round.items[questionIndex];
+      const answerGroup = round.type === "behavior" ? assessmentAnswers.behaviors : assessmentAnswers.evidence;
+      answerGroup[item.id] = Number(button.dataset.value);
+      if (questionIndex < round.items.length - 1) {
+        questionIndex += 1;
+      }
+      renderScenario();
+    });
+
+    previousQuestion.addEventListener("click", () => {
+      if (questionIndex > 0) {
+        questionIndex -= 1;
+      } else if (roundIndex > 0) {
+        roundIndex -= 1;
+        questionIndex = assessmentRounds[roundIndex].items.length - 1;
+      }
+      renderScenario();
+    });
+
+    completeAssessment.addEventListener("click", () => {
+      const round = assessmentRounds[roundIndex];
+      const answerGroup = round.type === "behavior" ? assessmentAnswers.behaviors : assessmentAnswers.evidence;
+      const roundComplete = round.items.every((item) =>
+        Object.prototype.hasOwnProperty.call(answerGroup, item.id)
+      );
+      if (!roundComplete) return;
+      if (roundIndex < assessmentRounds.length - 1) {
+        roundIndex += 1;
+        questionIndex = 0;
+        renderScenario();
+      } else {
+        calculate();
+      }
+    });
+
+    reassessButton.addEventListener("click", () => {
+      roundIndex = 0;
+      questionIndex = 0;
+      assessmentAnswers = { behaviors: {}, evidence: {} };
+      selfReportStartedAt = Date.now();
+      renderScenario();
+      showScreen(assessmentScreen);
+    });
+  </script>
+</body>
+</html>

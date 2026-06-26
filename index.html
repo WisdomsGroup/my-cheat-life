@@ -936,7 +936,7 @@
       <div class="assessment-footer">
         <button class="secondary" type="button" id="previousQuestion">上一題</button>
         <div>
-          <strong id="progressText">1/10</strong>
+          <strong id="progressText">1/3</strong>
           <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
         </div>
         <button class="complete-button" type="button" id="completeAssessment" disabled>完成</button>
@@ -1129,6 +1129,11 @@
       SelfReportMatchingRules.behaviorQuestions.forEach((question) => {
         if (Object.prototype.hasOwnProperty.call(assessmentAnswers.behaviors, question.id)) {
           answeredDimensions.add(question.dimension || question.id);
+        }
+      });
+      RealBehaviorEvidence.questions.forEach((question) => {
+        if (Object.prototype.hasOwnProperty.call(assessmentAnswers.evidence, question.id)) {
+          answeredDimensions.add(question.dimension);
         }
       });
       RealBehaviorEvidence.questions.forEach((question) => {
